@@ -55,15 +55,18 @@ export function drawApollonian(canvas: HTMLCanvasElement, ctx: CanvasRenderingCo
 
     var minDim = Math.min(canvas.width, canvas.height) - 10;
     
-    function draw_circle([z, r]: Circle): number {
-        var [x, y, r] = [(z.x * minDim + canvas.width)/2, (-z.y * minDim + canvas.height)/2, Math.abs(r) * minDim/2];
-        ctx.beginPath();
-        ctx.ellipse(x, y, r, r, 0, 0, 2*Math.PI);
-        ctx.stroke();
+    function draw_circle([z, r_old]: Circle): number {
+        r_old = Math.abs(r_old);
+        var [x, y, r] = [(z.x * minDim + canvas.width)/2, (-z.y * minDim + canvas.height)/2, r_old * minDim/2];
+        if (r_old < 20) {
+            ctx.beginPath();
+            ctx.ellipse(x, y, r, r, 0, 0, 2*Math.PI);
+            ctx.stroke();
+        }
 
         var dx = Math.abs(Math.max(0, Math.min(canvas.width, x)) - x);
         var dy = Math.abs(Math.max(0, Math.min(canvas.height, y)) - y);
-        if (dx > r || dy > r) return -1;
+        if (dx > 2*r || dy > 2*r) return -1;
         if (r < 1) return 0;
         return 1;
     }
