@@ -25,11 +25,19 @@ function main() {
     function drawWithMouse(x: number, y: number) {
         var x =  (x * 2 - canvas.width) / minDim;
         var y = -(y * 2 - canvas.height) / minDim;
+        var flipped = Math.abs(x) < 0.01 && y > 0;
+        if (flipped)
+            y *= -1;
         var r = 1 - Math.sqrt(x*x+y*y);
 
         var R = (r*r-x*x-(1-y)*(1-y))/(2*(y-r-1));
-        init_circles[0] = [new Complex(x, y), r];
-        init_circles[1] = [new Complex(0, 1-R), R];
+        if (flipped) {
+            init_circles[0] = [new Complex(x, -y), r];
+            init_circles[1] = [new Complex(0, R-1), R];
+        } else {
+            init_circles[0] = [new Complex(x, y), r];
+            init_circles[1] = [new Complex(0, 1-R), R];
+        }
         drawApollonian(canvas, ctx, init_circles);
     }
 
