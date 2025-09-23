@@ -66,7 +66,7 @@ export function drawApollonian(canvas: HTMLCanvasElement, ctx: CanvasRenderingCo
 
         var dx = Math.abs(Math.max(0, Math.min(canvas.width, x)) - x);
         var dy = Math.abs(Math.max(0, Math.min(canvas.height, y)) - y);
-        if (dx > 2*r || dy > 2*r) return -1;
+        if (dx > 10*r || dy > 10*r) return -1;
         if (r < 1) return 0;
         return 1;
     }

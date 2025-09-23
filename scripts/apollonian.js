@@ -51,7 +51,7 @@ export function drawApollonian(canvas, ctx, init_circles) {
         }
         var dx = Math.abs(Math.max(0, Math.min(canvas.width, x)) - x);
         var dy = Math.abs(Math.max(0, Math.min(canvas.height, y)) - y);
-        if (dx > 2 * r || dy > 2 * r)
+        if (dx > 10 * r || dy > 10 * r)
             return -1;
         if (r < 1)
             return 0;
