@@ -14,15 +14,15 @@ The math is based on https://arxiv.org/abs/math/0101066. However, just reading t
 
 The fundamental equations that we will start with are known as [Descartes' theorem](https://en.wikipedia.org/wiki/Descartes%27_theorem).
 
-Defining a circle's *bend* or *curvature* in relation to its radius $r$ as $b=1/r$, Descartes' theorem consists of the following equation between four mutually tangent circles' bends:
+Defining a circle's *bend* or *curvature* in relation to its radius $r$ as $b=1/r$[^1], Descartes' theorem consists of the following equation between four mutually tangent circles' bends:
 
 $$b_1^2+b_2^2+b_3^2+b_4^2=\frac{1}{2}\left(b_1+b_2+b_3+b_4\right)^2$$
 
-With this being a quadratic equation, it's easy to become inspired to finally find a use for the quadratic formula and solve for the fourth variable. Indeed, exactly this is what the Wikipedia article recommends doing, as it gives this formula for finding the bend of the 4th circle, while taking the first three circles as given:
+With this being a quadratic equation, it's easy to become inspired to finally find a use for the quadratic formula and solve for the fourth variable. Indeed, exactly this is what the Wikipedia article suggests, as it gives this formula for finding the bend of the 4th circle, while taking the first three circles as given:
 
 $$b_4=b_1+b_2+b_3\pm 2\sqrt{b_1b_2+b_1b_3+b_2b_3}$$
 
-<img width="1920" height="955" alt="apollonian-circles-bends" src="https://github.com/user-attachments/assets/7116b029-745c-4b81-b94a-bbd9e4d66aad" />
+<img width="480" height="389" alt="apollonian-circles-bends" src="https://github.com/user-attachments/assets/7116b029-745c-4b81-b94a-bbd9e4d66aad" />
 
 Note how with this, every three mutually tangent circles have two different candidates for a fourth circle that would be tangent to all of the original circles. Furthermore, declaring $D=2\sqrt{b_1b_2+b_1b_3+b_2b_3}$, the above equation simplifies to giving the two solutions:
 
@@ -41,7 +41,9 @@ $$
 
 This means that all of the pain that comes with applying the quadratic formula wasn't necessary after all. You simply need to start with four mutually tangent circles, declare three of them to be the "original" circles with bends $b_1, b_2, b_3$ while the remaining one is just one of the two circles neighboring them with bend $b_4$, and the equation above gives the easy to compute formula for a unique next circle that is tangent to the first three but distinct from the fourth: $b_4'=2(b_1+b_2+b_3)-b_4$.
 
-Note that the particular choice of which of the four starting circles to pick as the outsider to reflect over the other three circles was mostly arbitrary. You could have picked any one of the four circles to reflect over the others, and each would have given a different new circle that is tangent to three of the four original circles. It is only after starting to iterate this process that you need to be slightly careful about which choice to make: One of the four choices of which circle to replace just un-does the previous move that added the exact circle that the current move would be removing, and would get you back to a state that you previously explored. So an algorithm should always remember which circle was last added to any group of four, and make sure to only make moves that would replace one of the older three with yet another new circle.
+Note that the particular choice of which of the four starting circles to pick as the outsider to reflect over the other three circles was mostly arbitrary. You could have picked any one of the four circles to reflect over the others, and each would have given a different new circle that is tangent to the other three of the four original circles.
+
+It is only after starting to iterate this process that you need to be slightly careful about which choice to make: For one of the four circles, replacing it with a "new" circle just undoes the previous move that added the exact circle that the current move would be removing, and would get you back to a state that you previously explored. So an algorithm should always remember which circle is the newest within any group of four, and make sure to only make moves that would replace one of the older three with yet another new circle.
 
 As such, an algorithm for generating more circle bends connecting to the previous ones may look like this:
 ```js
@@ -75,13 +77,13 @@ $$
 (z_1b_1)^2+(z_2b_2)^2+(z_3b_3)^2+(z_4b_4)^2=\frac{1}{2}\left(z_1b_1+z_2b_2+z_3b_3+z_4b_4\right)^2
 $$
 
-In this, $z_1, z_2, z_3, z_4$ are complex numbers that each represent the center of one of the four touching circles. After substituting $u_i:=z_ib_i$, the equation actually becomes the exact same as the original Descartes' theorem, except that the numbers it relates are different ones. With this, we can directly apply the result that we previously derived for the bends to instead be used for computing new circle centers:
+In this, $z_1, z_2, z_3, z_4$ are complex numbers that each represent the center of one of the four touching circles. After substituting $u_i:=z_ib_i$, the equation actually becomes the exact same as the original Descartes' theorem, except that the numbers it relates are $u_i$ instead of $b_i$. With this, we can directly apply the same result that we previously derived for the bends to instead be used for computing new circle centers:
 
 $$
 u_4'=2(u_1+u_2+u_3)-u_4
 $$
 
-This makes it clear that getting the previous algorithm to also work for computing circle centers just means adding more dimensions to the respective linear equations. Once $u=zb$ and $b$ are known for a given circle, the circle center is easy to extract as $z=u/b$.
+This makes it clear that getting the previous algorithm to also work for computing circle centers just means adding more dimensions to the respective linear equations. Once $u$ and $b$ are known for a given circle, the circle center is easy to extract as $z=u/b$.
 
 ### Starting from three circles
 
@@ -98,7 +100,7 @@ $$
 u_4=u_1+u_2+u_3\pm 2\sqrt{u_1u_2+u_1u_3+u_2u_3}
 $$
 
-However, this naive approach quickly runs into problems: The first equation has two different solutions depending on whether you choose the $+$ or the $-$ sign, and the second equation also has two different solutions in the same way. In total, this would give four combinations, even though there are always only exactly two different circles that are tangent to the original three. One might hope that there is a consistent way in which the sign from one equation can be matched with the sign of the other equation, but after some experimentation, it becomes apparent that every combination has some cases where it is correct and some cases where it is incorrect.
+However, this naive approach quickly runs into problems: The first equation has 2 different solutions depending on whether you choose the $+$ or the $-$ sign, and the second equation also has 2 different solutions in the same way. In total, this would give 4 combinations, even though there are always only exactly 2 different circles that are tangent to the original three. One might hope that there is a consistent way in which the sign from one equation can be matched with the sign of the other equation, but after some experimentation, it becomes apparent that every combination has some cases where it is correct and some cases where it is incorrect.
 
 What saves us here is an equation given relatively close to the start of the paper I referenced earlier, [Beyond the Descartes circle theorem](https://arxiv.org/abs/math/0101066):
 
@@ -106,9 +108,9 @@ $$
 \sum_{j=1}^4 b_ju_j=\frac{1}{2}\left(\sum_{j=1}^4b_j\right)\left(\sum_{j=1}^4u_j\right)
 $$
 
-According to the paper, this equation is derived by substituting $z_i$ with $z_i+w$ inside the complex Descartes' theorem for an arbitrary complex number $w$, and comparing the resulting coefficients on both sides of the equation for different powers of $w$, which supposedly leads to both the original Descartes' theorem and this new equation. While I don't understand why the specific approach described by the paper is valid, as the complex Descartes' theorem does not state that the equation must hold for multiple values of $w$ while keeping the rest fixed, (which would be necessary for directly equating the different coefficients of $w$ according to my understanding. I would appreciate insight on this), if we just take the equation for granted, it gives us exactly what we still need.
+While I don't understand why the specific approach for deriving this described by the paper is valid[^2], if we just take the equation for granted, it gives us exactly what we still need.
 
-This is because we now have a linear equation that can be solved for a unique value of $u_4$ given a choice for $b_4$. This means we just get the wanted total of two combinations of bend and circle center. Solving the linear equation above for $u_4$, we get:
+This is because we now have a linear equation that can be solved for a unique value of $u_4$ given a choice for $b_4$. That means we just get the wanted total of 2 combinations of bend and circle center. Solving the linear equation above for $u_4$, we get:
 
 $$
 S:=\frac{1}{2}\sum_{j=1}^4b_j
@@ -117,9 +119,9 @@ $$
 u_4=\frac{-\sum_{j=1}^3 (b_j-S)u_j}{b_4-S}
 $$
 
-What stands out here is that we're dividing by $b_4-S=b_4-(b_1+b_2+b_3+b_4)/2=-(b_1+b_2+b_3-b_4)/2$, which would lead to problems if that quantity is 0. However, this condition can be restated as $b_4=b_1+b_2+b_3$. When compared to the result of the quadratic formula given above, this can be recognized as being exactly the case where the discriminant was 0 and the quadratic formula gives only one bend. In this case, you can simply use the quadratic formula on the complex Descartes' theorem to get the two different circle centers that share that same bend.
+What stands out here is that we're dividing by $b_4-S=b_4-(b_1+b_2+b_3+b_4)/2=-(b_1+b_2+b_3-b_4)/2$, which would lead to problems if this quantity is 0. However, that condition can be restated as $b_4=b_1+b_2+b_3$. When compared to the result of the quadratic formula given above, this can be recognized as being exactly the case where the discriminant was 0 and the quadratic formula gives only one bend. In that case, you can simply use the quadratic formula on the complex Descartes' theorem to get the 2 different circle centers from just the single bend.
 
-With this, we have found a way to always get the two different circles that each are tangent to the three original mutually tangent circles.
+With this, we have found a way to always get the 2 different circles that each are tangent to the three original mutually tangent circles.
 
 ### Summary
 Getting the two circles that are tangent to 3 given circles:
@@ -136,8 +138,7 @@ Getting the one circle that is tangent to 3 out of 4 given circles:
 1. Start with 4 mutually tangent circles with bends $b_1, b_2, b_3, b_4$ and centers $z_1, z_2, z_3, z_4$, with $u_i:=z_ib_i$.
 2. A new circle that is tangent to the first three circles is given by $b_4' = 2(b_1+b_2+b_3)-b_4$ and $u_4'=2(u_1+u_2+u_3)-u_4$.
 
-### Notes
-
-You might have noticed that the circle bends are sometimes negative. This simply determines whether other circles should be on a given circle's inside or outside. In general, two touching circles have one inside the other if the signs of their bends are different. The circles can be drawn to the screen as if their radius corresponds to the absolute value of their bend.
-
-Straight lines can also occur as part of these calculations, as they are degenerate forms of a circle in the case where there is 0 bend, or in other words, infinitely large circles. [Beyond the Descartes circle theorem](https://arxiv.org/abs/math/0101066) describes a method to deal with this using circle inversion, which doesn't even seem computationally complex, but my code worked well enough by just hiding the circles when they became too large, as there were already precision issues before the gigantic circles became straight lines.
+[^1]: You may notice that the circle bends are sometimes negative. This simply determines whether other circles should be on a given circle's inside or outside. In general, two touching circles have one inside the other if the signs of their bends are different. For drawing a circle to the screen, you can always draw the circle using the absolute value of its bend.\
+  \
+  Straight lines can also occur as part of these calculations, as they are degenerate forms of a circle in the case where there is 0 bend, or in other words, infinitely large circles. [Beyond the Descartes circle theorem](https://arxiv.org/abs/math/0101066) describes a method to deal with this using circle inversion, which doesn't even seem computationally complex, but my code worked well enough by just hiding the circles when they became too large, as there were already precision issues before the gigantic circles became straight lines.
+[^2]: According to the paper, the equation is derived by substituting $z_i$ with $z_i+w$ inside the complex Descartes' theorem for an arbitrary complex number $w$, and comparing the resulting coefficients on both sides of the equation for different powers of $w$, which supposedly leads to both the original Descartes' theorem and this new equation. However, the complex Descartes' theorem does not state that the equation must hold for non-zero values of $w$ while keeping the rest fixed, which, according to my understanding, would be necessary for directly equating the coefficients of the powers of $w$. I would appreciate insight on this.
